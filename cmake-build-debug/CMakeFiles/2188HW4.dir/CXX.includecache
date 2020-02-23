@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/bkallen/Desktop/gDriveDB/2020/Spring/CSCI-2421 Data Structures/2188HW4/2188HW4/functions.cpp
+functions.h
+/Users/bkallen/Desktop/gDriveDB/2020/Spring/CSCI-2421 Data Structures/2188HW4/2188HW4/functions.h
+
+/Users/bkallen/Desktop/gDriveDB/2020/Spring/CSCI-2421 Data Structures/2188HW4/2188HW4/functions.h
+iostream
+-
+fstream
+-
+sstream
+-
+vector
+-
+deque
+-
+node1.h
+/Users/bkallen/Desktop/gDriveDB/2020/Spring/CSCI-2421 Data Structures/2188HW4/2188HW4/node1.h
+
+/Users/bkallen/Desktop/gDriveDB/2020/Spring/CSCI-2421 Data Structures/2188HW4/2188HW4/node1.h
+cstdlib
+-
+string
+-
+
