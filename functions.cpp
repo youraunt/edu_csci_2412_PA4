@@ -5,33 +5,38 @@
 #include "functions.h"
 
 
-#define WHAT_IS(x) std::cerr << #x << " is " << x << std::endl;
-
-
+/// @brief Handles user input with option of entering filename at command line
+/// @param argc (argument count) the number of strings pointed to by argv should be 1+
+/// @param argv (argument vector) A one dimensional array of strings. Each string is one
+//   of the arguments passed to the program.
+/// @param userInput string storage for user input
+/// @param infile ifstream
+/// @return userInput string
 std::string getFileName(int argc, char **argv, std::string &userInput, std::ifstream &infile) {
     /// @brief I am a mac user and not familiar with command line prompts
     /// @brief I got this from a geeks for geeks post
     /// @todo TEST
+    /// @brief if more than one argument is passed use it.
     if (argc > 1) { userInput = argv[1]; }
-    do {
-        std::cout << "Please enter your file name: " << std::endl
-                  << "\x1b[32m> \x1b[0m";
-        std::cin >> userInput;
-        /// @brief tolower returns the string in lowercased
-        transform(userInput.begin(), userInput.end(), userInput.begin(), ::tolower);
-        infile.open(userInput);
-        // assert(infile);
-        // @brief This checks to for a working file stream.
-        /// @brief Exits program if files stream is not working.
-        if (!infile || infile.fail()) {
-            std::cout << "I could not fine your file." << std::endl
-                      << "Please, try again." << std::endl;
-            continue;
-        }
-        break;
-    } while (true);
+        /// else get input from user do/while to continue until valid file is found.
+    else {
+        do {// until file is found
+            std::cout << "Please enter your file name: " << std::endl
+                      << "\x1b[32m> \x1b[0m";
+            std::cin >> userInput;
+            //userInput = makeLowerCase(userInput);
+            infile.open(userInput);
+            if (!infile || infile.fail()) {
+                std::cout << "I could not fine your file." << std::endl
+                          << "Please, try again." << std::endl;
+                continue;
+            }
+            break;
+        } while (true);
+
+    }///# else
     return std::string(userInput);
-}
+}///# getFileName
 
 /// @brief functions to parse infile one string at a time
 /// @brief each string is read in one char at a time
@@ -50,12 +55,10 @@ std::string getString(std::ifstream &infile) {
     return readIn;
 }
 
-//
-//    void eat_white(std::ifstream &infile) {
-//        while (infile && isspace(infile.peek()))
-//            infile.ignore();
-//    }
 
+/// @brief This function builds a linked list from the filestream.
+/// @param infile filestream
+/// @return head node
 node *linkedListBuilder(std::ifstream &infile) {
     auto *head = new node;
     auto lastNode = head;
@@ -68,89 +71,82 @@ node *linkedListBuilder(std::ifstream &infile) {
         lastNode = newNode;
     }
     return head;
-}
+}///#linkedListBuilder
 
-bool isSearchValid(node *head, node *tosearch) {
-    node *current = head;
-    std::string data = tosearch->data();
-    while (current != nullptr) {
-        for (; current; current = current->link()) {
-            std::string temp = current->data();
-            if (temp == data) {
-                std::cout << "Found a match!" << std::endl;
-                return true;
-            } else if (temp != data) std::cout << "Searching" << std::endl;
-        }
-    }
-    std::cout << "No matches found!" << std::endl;
-    return false;
-}
-
-/// @brief
-/// @return
-std::string getSearch(std::string &data, const std::string& searchNumber) {
+/// @brief This function handles user input.
+/// @param userInput string to hold users input
+/// @param searchNumber string to display which search this is.
+/// @return  user input
+std::string getSearch(std::string &userInput, const std::string &searchNumber) {
     std::cout << "\nWhat is the " << searchNumber << " word you would like to search for?" << std::endl
               << "\x1b[32m> \x1b[0m";
-    std::cin >> data;
-    return data;
-}
+    std::cin >> userInput;
+    return userInput;
+}///#getSearch
 
-/// @brief
-/// @param head
+/// @brief This function displays a linked list to the console
+/// the for loops runs until last link
+/// @param head const pointer to head node
 void display(node *const head) {
     node *tempNode = head;
     for (; tempNode; tempNode = tempNode->link()) {
         std::cout << tempNode->data() << " ";
     }
-}
-
+}///#display
 
 /// @brief This function checks to see if the user wants to
 ///     format the text to another width.
 /// @return capitalized user input
 bool loopProgram() {
-    std::cout << "\nAnother width? (y/n)" << std::endl;
+    std::cout << "\nAnother sublist? (y/n)" << std::endl;
     std::cout << "\x1b[32m>\x1b[0m";
-    char userInput;
+    std::string userInput;
     std::cin >> userInput;
-    int userInputCap = toupper(userInput);
-    if (userInputCap == 'Y')
+    userInput = makeLowerCase(userInput);
+    if (userInput == "y") {
         return true;
-    else return false;
+    } else return false;
 }///#loopProgram
 
-std::string lowercased(const std::string &_string) {
-    std::string temp;
-    for (auto i : _string) {
-        temp += tolower(i);
-    }
-    return temp;
-}
-
-void insertionSort(node* &head) {
-    node* preSortHead = head->link();
-    node* pointer = head;
-    node* newSortedList = nullptr;
-    node* sublist = nullptr;
+std::string makeLowerCase(const std::string &in) {
+    std::string out;
+    std::transform(in.begin(), in.end(), std::back_inserter(out), ::tolower);
+    return out;
+}///#makeLowerCase
+/// @brief This function uses insertion sort to alphabetically sort a linked list
+/// @param head  first node pointer reference
+/// @authors I used a combination of the stl version and geeks for geeks version
+void insertionSort(node *&head) {
+    /// First index of list
+    node *preSortHead = head->link();
+    /// Current index of sorted list
+    node *pointer = head;
+    /// temporary housing for node pointers
+    node *sublistHead = nullptr;
+    node *sublist = nullptr;
     head->set_link(nullptr);
 
-    while (preSortHead != nullptr) {
-        while (lowercased(preSortHead->data()) > lowercased(pointer->data())) {
-            if (pointer->link() == nullptr) {
-                break;
-            } else {
+    do {/// until last node
+        /// -- I conditioned that data to lowercase for comparison
+        /// otherwise the capitalized words don't sort correctly
+        while (makeLowerCase(preSortHead->data()) > makeLowerCase(pointer->data())) {
+            if (pointer->link() == nullptr) {break;}
+            else {// put node in sorted sublist and iterate
                 sublist = pointer;
                 pointer = pointer->link();
             }
-        }
-            newSortedList = preSortHead;
-            preSortHead = preSortHead->link();
-            newSortedList->set_link(pointer);
-            if (sublist == nullptr) {
-                head = newSortedList;
-            } else { sublist->set_link(newSortedList); }
-            sublist = nullptr;
-            pointer = head;
-        }
+        }///#while
+        /// establish head of sublist for linkage and iterate
+        sublistHead = preSortHead;
+        preSortHead = preSortHead->link();
+        sublistHead->set_link(pointer);
+        /// if not front make front then link it all up
+        if (sublist == nullptr) {
+            head = sublistHead;
+        } else { sublist->set_link(sublistHead); }
+       /// set up for next iteration
+        sublist = nullptr;
+        pointer = head;
+    } while (preSortHead != nullptr);
 
-    }
+}///# insertion sort

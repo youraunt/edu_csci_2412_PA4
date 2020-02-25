@@ -5,6 +5,8 @@
 #ifndef INC_2188HW4_FUNCTIONS_H
 #define INC_2188HW4_FUNCTIONS_H
 
+#include <algorithm>
+#include <cassert>
 #include <iostream>
 #include <fstream>
 #include "node1.h"
@@ -32,17 +34,13 @@ inline void unknownInput() {
     /// @brief winds down stack
     exit(EXIT_FAILURE);
 }
-std::string lowercased(const std::string &_string);
-
-void eat_white(std::ifstream &infile);
+std::string makeLowerCase(const std::string &in);
 
 std::string getString(std::ifstream &infile);
 
 node *linkedListBuilder(std::ifstream &infile);
 
-std::string getSearch(std::string &data, const std::string& searchNumber);
-
-bool isSearchValid(node *head, node *tosearch);
+std::string getSearch(std::string &userInput, const std::string& searchNumber);
 
 void display(node *const head);
 
